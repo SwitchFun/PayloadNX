@@ -5,3 +5,7 @@
 /PayloadNX/ReiNX.bin - ReiNX
 <br>
 Fusee-Primary - /PayloadNX/fusee-primary.bin
+<br>
+<br>
+<h1>Note:</h1>
+This is a host repo, we do not have source code here. PayloadNX is closed source.
