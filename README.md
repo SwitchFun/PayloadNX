@@ -4,7 +4,7 @@
 <br>
 /PayloadNX/ReiNX.bin - ReiNX
 <br>
-Fusee-Primary - /PayloadNX/fusee-primary.bin
+/PayloadNX/fusee-primary.bin - Fusee-Primary
 <br>
 <br>
 <h1>Note:</h1>
