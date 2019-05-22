@@ -1,20 +1,23 @@
 #include <string.h>
 #include <stdio.h>
 #include <switch.h>
+#include "recoverymode.h"
 #define IRAM_PAYLOAD_MAX_SIZE 0x2F000
 #define IRAM_PAYLOAD_BASE 0x40010000
 static alignas(0x1000) u8 g_reboot_payload[IRAM_PAYLOAD_MAX_SIZE];
 static alignas(0x1000) u8 g_ff_page[0x1000];
 static alignas(0x1000) u8 g_work_page[0x1000];
 int isClose;
+//Partition names for backing up BOOT1 & BOOT2
+char *partitionNames[] = {"BOOT0", "BOOT1"};
 void do_iram_dram_copy(void *buf, uintptr_t iram_addr, size_t size, int option) {
     memcpy(g_work_page, buf, size);
     SecmonArgs args = {0};
-    args.X[0] = 0xF0000201;             /* smcAmsIramCopy */
-    args.X[1] = (uintptr_t)g_work_page;  /* DRAM Address */
-    args.X[2] = iram_addr;              /* IRAM Address */
-    args.X[3] = size;                   /* Copy size */
-    args.X[4] = option;                 /* 0 = Read, 1 = Write */
+    args.X[0] = 0xF0000201;
+    args.X[1] = (uintptr_t)g_work_page;
+    args.X[2] = iram_addr;
+    args.X[3] = size;
+    args.X[4] = option;
     svcCallSecureMonitor(&args);
     memcpy(buf, g_work_page, size);
 }
@@ -56,7 +59,7 @@ void sxosMagic(){
         } else {
             fread(g_reboot_payload, 1, sizeof(g_reboot_payload), f);
             fclose(f);
-            printf("Rebooting to payload...");
+            
 			reboot_to_payload();
         }
 	
@@ -84,6 +87,48 @@ void atmosphereCheck(){
 	
 }
 }
+
+void toggleAutoRCM(){
+	consoleClear();
+	
+	FsStorage storage;
+
+	int returnable = 0;
+
+	int boot0_part = 0;
+
+	Result r = fsOpenBisStorage(&storage, boot0_part);
+
+	u64 size = 0;
+
+	fsStorageGetSize(&storage, &size);
+
+	if (size == 0)
+	{
+		return -1;
+	}
+
+	char *buf = (char *)malloc(size);
+	r = fsStorageRead(&storage, 0, buf, size);
+	for (int i = 0; i < 4; i++)
+	{
+		int off = BCT_KEY_OFF + i * BCT_SZ;
+		buf[off] ^= RCM_XOR;
+		if (buf[off] != 0xF7)
+			returnable = 1;
+	}
+
+	fsStorageWrite(&storage, 0, buf, size);
+	fsStorageClose(&storage);
+	free(buf);
+	printf("done! press home to exit");
+	return returnable;
+	printf("Operation: AutoRCM Toggle\n");
+	printf("\x1b[1;1H%s%s%s", CONSOLE_GREEN, "DONE!", CONSOLE_RESET);
+	printf("Press B to quit the application.\n");
+	
+}
+
 
 void reiCheck(){
 	bool isAtmosphere = 0;
@@ -142,7 +187,7 @@ void hekateMagic(){
         } else {
             fread(g_reboot_payload, 1, sizeof(g_reboot_payload), f);
             fclose(f);
-            printf("Rebooting to payload...");
+            
 			reboot_to_payload();
         }
 	
@@ -163,7 +208,7 @@ void ReiNXMagic(){
         } else {
             fread(g_reboot_payload, 1, sizeof(g_reboot_payload), f);
             fclose(f);
-            printf("Rebooting to payload...");
+            
 			reboot_to_payload();
         }
 		
@@ -184,7 +229,7 @@ void FuseeMagic(){
         } else {
             fread(g_reboot_payload, 1, sizeof(g_reboot_payload), f);
             fclose(f);
-            printf("Rebooting to payload...");
+            
 			reboot_to_payload();
         }
 	
@@ -208,7 +253,7 @@ void ArgonNXMagic(){
         } else {
             fread(g_reboot_payload, 1, sizeof(g_reboot_payload), f);
             fclose(f);
-            printf("Rebooting to payload...");
+            
 			reboot_to_payload();
         }
 	
@@ -231,7 +276,7 @@ void Slot1Magic(){
         } else {
             fread(g_reboot_payload, 1, sizeof(g_reboot_payload), f);
             fclose(f);
-            printf("Rebooting to payload...");
+            
 			reboot_to_payload();
         }
 	
@@ -254,7 +299,7 @@ void Slot2Magic(){
         } else {
             fread(g_reboot_payload, 1, sizeof(g_reboot_payload), f);
             fclose(f);
-            printf("Rebooting to payload...");
+            
 			reboot_to_payload();
         }
 }
@@ -309,11 +354,9 @@ void Slot3Magic(){
         } else {
             fread(g_reboot_payload, 1, sizeof(g_reboot_payload), f);
             fclose(f);
-            printf("Rebooting to payload...");
+            
 			reboot_to_payload();
         }
-	
-	
 }
 }
 void ExceptionNotFound(){
@@ -321,7 +364,6 @@ void ExceptionNotFound(){
 	printf("PayloadNX can not find the Payload!\n");
 	printf("Press B to exit.");
 	int isClose = true;
-	
 }
 void confirmAtmosphereBoot(){
 	consoleClear();
@@ -342,8 +384,9 @@ int main(int argc, char **argv)
 	int menu7 = 11;
 	int menu8 = 12;
 	int menu9 = 13;
+	int menu10 = 14;
 	int current = 6;
-	printf("\x1b[1;1H%s%s%s", CONSOLE_BLUE, "PayloadNX 2.0.2", CONSOLE_RESET);
+	printf("\x1b[1;1H%s%s%s", CONSOLE_BLUE, "PayloadNX 3.0", CONSOLE_RESET);
 	printf("\x1b[2;1H%s%s%s", CONSOLE_GREEN, "--Installed Custom Firmwares--", CONSOLE_RESET);
 	    Result rc1 = splInitialize();
     if (R_FAILED(rc1)) {
@@ -359,14 +402,11 @@ int main(int argc, char **argv)
             printf("\x1b[3;1H%s%s%s", CONSOLE_RED, "SXOS: Installed", CONSOLE_RESET);
 			
         }
-	
-	
 	}
     Result rc2 = splInitialize();
     if (R_FAILED(rc2)) {
-        
+		consoleClear();
         printf("\n ERROR: Please restart PayloadNX!\n");
-        
     } else {
         FILE *f = fopen("sdmc:/ReiNX/splash.bin", "rb");
         if (f == NULL) {
@@ -400,8 +440,12 @@ int main(int argc, char **argv)
 	printf("\x1b[12;4HSLOT #2");
 	printf(CONSOLE_YELLOW);
 	printf("\x1b[13;4HSLOT #3");
+	printf(CONSOLE_RED);
+	printf("\x1b[14;4HToggle AutoRCM (DANGER)");
 
 	printf("\x1b[%d;2H>", current);
+	printf("\x1b[20;1HNOTE: AUTORCM IS DANGEROUS WE ARE NOT RESPONSIBLE FOR BRICKS OR ANYTHING!");
+	
     while(appletMainLoop())
     {
         hidScanInput();
@@ -411,7 +455,7 @@ int main(int argc, char **argv)
 		{
 			printf("\x1b[%d;2H ", current);
 			current = current - 1;
-			if (current < 6) current = 13;
+			if (current < 6) current = 14;
 				printf ("\n");
 			    printf ("\x1b[%d;2H>", current);		
 			}
@@ -419,7 +463,7 @@ int main(int argc, char **argv)
 			if (kDown & KEY_DOWN) {
 				printf("\x1b[%d;2H ", current);
 			current = current + 1; 
-			if (current > 13) current = 6;
+			if (current > 14) current = 6;
 				printf("\n");
 				printf("\x1b[%d;2H>", current);
 		}
@@ -437,6 +481,12 @@ int main(int argc, char **argv)
 		{
 			if (current == menu4) hekateCheck();
 		}
+		if (kDown & KEY_A) 
+		{
+			// :)
+			if (current == menu10) toggleAutoRCM();
+		}
+		
 		if (kDown & KEY_A) 
 		{
 			if (current == menu5) reiCheck();
