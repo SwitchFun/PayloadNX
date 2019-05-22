@@ -16,6 +16,9 @@ This is a host repo, we do not have source code here. PayloadNX is closed source
 <br>
 <h1>Credits:</h1>
 <p>SwitchFun - Main Code<br></p>
+</hr>
 <p>Atmosphere Project - Reboot to payload sys-api code.</p>
+</hr>
 <br>
 <p>Reisyukaku's ReiNXToolkit Project - AutoRCM library.</p>
+</hr>
