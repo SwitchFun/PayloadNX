@@ -1,5 +1,8 @@
 # PayloadNX
 <br>
+<p><strong>PayloadNX</strong> The fastest & most stable method of launching Payloads via Homebrew.</p>
+<br>
+<br>
 /PayloadNX/sx.bin - SXOS
 <br>
 /PayloadNX/ReiNX.bin - ReiNX
