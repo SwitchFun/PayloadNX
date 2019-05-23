@@ -152,10 +152,7 @@ void reiCheck(){
 
 void sxCheck(){
 	bool isAtmosphere = 0;
-	Result rc = splInitialize();
-    if (R_FAILED(rc)) {
-		printf("SPL could not be initalized, Please message on our discord.\n");
-    } else {
+
 		//loader.ini = atmosphere only
         FILE *f = fopen("sdmc:/atmosphere/loader.ini", "rb");
         if (f == NULL) {
@@ -168,16 +165,13 @@ void sxCheck(){
         }
 	
 	
-}
+
 }
 
 void hekateMagic(){
 	
 		
-    Result rc = splInitialize();
-    if (R_FAILED(rc)) {
-		printf("SPL could not be initalized, Please message on our discord.\n");
-    } else {
+
         FILE *f = fopen("sdmc:/PayloadNX/hekate.bin", "rb");
         if (f == NULL) {
             ExceptionNotFound();
@@ -191,14 +185,10 @@ void hekateMagic(){
 	
 	
 }
-}
+
 void ReiNXMagic(){
 	
-		
-    Result rc = splInitialize();
-    if (R_FAILED(rc)) {
-		printf("SPL could not be initalized, Please message on our discord.\n");
-    } else {
+
         FILE *f = fopen("sdmc:/PayloadNX/ReiNX.bin", "rb");
         if (f == NULL) {
             ExceptionNotFound();
@@ -211,15 +201,10 @@ void ReiNXMagic(){
         }
 		
 }
-}
+
 void FuseeMagic(){
 	
-		
-    Result rc = splInitialize();
-    if (R_FAILED(rc)) {
-        printf("SPL could not be initalized, Please message on our discord.\n");
-        
-    } else {
+
         FILE *f = fopen("sdmc:/PayloadNX/fusee-primary.bin", "rb");
         if (f == NULL) {
             ExceptionNotFound();
@@ -234,16 +219,11 @@ void FuseeMagic(){
 	
 }
 	
-}
+
 
 void ArgonNXMagic(){
 	
-		
-    Result rc = splInitialize();
-    if (R_FAILED(rc)) {
-        printf("SPL could not be initalized, Please message on our discord.\n");
-        
-    } else {
+
         FILE *f = fopen("sdmc:/PayloadNX/argon-nx.bin", "rb");
         if (f == NULL) {
             ExceptionNotFound();
@@ -258,7 +238,7 @@ void ArgonNXMagic(){
 	
 }
 	
-}
+
 void Slot1Magic(){
 	
 		
@@ -284,12 +264,7 @@ void Slot1Magic(){
 }
 
 void Slot2Magic(){
-	
-    Result rc = splInitialize();
-    if (R_FAILED(rc)) {
-        printf("SPL could not be initalized, Please message on our discord.\n");
-        
-    } else {
+
         FILE *f = fopen("sdmc:/PayloadNX/slot2.bin", "rb");
         if (f == NULL) {
             ExceptionNotFound();
@@ -301,13 +276,10 @@ void Slot2Magic(){
 			reboot_to_payload();
         }
 }
-}
+
 void ArgonCheck(){
 	bool isAtmosphere = 0;
-	Result rc = splInitialize();
-    if (R_FAILED(rc)) {
-		printf("SPL could not be initalized, Please message on our discord.\n");
-    } else {
+
 		//loader.ini = atmosphere only
         FILE *f = fopen("sdmc:/atmosphere/loader.ini", "rb");
         if (f == NULL) {
@@ -318,15 +290,12 @@ void ArgonCheck(){
 			consoleClear();
             ArgonNXMagic();
         }
-}
+
 }
 
 void hekateCheck(){
 	bool isAtmosphere = 0;
-	Result rc = splInitialize();
-    if (R_FAILED(rc)) {
-		printf("SPL could not be initalized, Please message on our discord.\n");
-    } else {
+
 		//loader.ini = atmosphere only
         FILE *f = fopen("sdmc:/atmosphere/loader.ini", "rb");
         if (f == NULL) {
@@ -338,14 +307,9 @@ void hekateCheck(){
             hekateMagic();
         }
 }
-}
+
 
 void Slot3Magic(){
-    Result rc = splInitialize();
-    if (R_FAILED(rc)) {
-        printf("SPL could not be initalized, Please message on our discord.\n");
-        
-    } else {
         FILE *f = fopen("sdmc:/PayloadNX/slot3.bin", "rb");
         if (f == NULL) {
             ExceptionNotFound();
@@ -356,7 +320,7 @@ void Slot3Magic(){
 			reboot_to_payload();
         }
 }
-}
+
 void ExceptionNotFound(){
 	consoleClear();
 	printf("PayloadNX can not find the Payload!\n");
@@ -372,6 +336,8 @@ void confirmAtmosphereBoot(){
 int main(int argc, char **argv)
 {
     consoleInit(NULL);
+	//Initialize SPL with the splInitialize(); function
+	splInitialize();
 	bool isDev = 1;
 	int confirmAtmosphere = 0;
 	int menu1 = 6;
@@ -384,7 +350,7 @@ int main(int argc, char **argv)
 	int menu9 = 13;
 	int menu10 = 14;
 	int current = 6;
-	printf("\x1b[1;1H%s%s%s", CONSOLE_BLUE, "PayloadNX 3.1", CONSOLE_RESET);
+	printf("\x1b[1;1H%s%s%s", CONSOLE_BLUE, "PayloadNX 3.2", CONSOLE_RESET);
 	printf("\x1b[2;1H%s%s%s", CONSOLE_GREEN, "--Installed Custom Firmwares--", CONSOLE_RESET);
 	    Result rc1 = splInitialize();
     if (R_FAILED(rc1)) {
@@ -524,7 +490,7 @@ int main(int argc, char **argv)
 		consoleUpdate(NULL);
 	
 	}
-
+	splExit();
     consoleExit(NULL);
     return 0;
 }
