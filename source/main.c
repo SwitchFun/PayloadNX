@@ -8,6 +8,7 @@ static alignas(0x1000) u8 g_reboot_payload[IRAM_PAYLOAD_MAX_SIZE];
 static alignas(0x1000) u8 g_ff_page[0x1000];
 static alignas(0x1000) u8 g_work_page[0x1000];
 int isClose;
+bool isMovable = 1;
 //Partition names for backing up BOOT1 & BOOT2
 char *partitionNames[] = {"BOOT0", "BOOT1"};
 void do_iram_dram_copy(void *buf, uintptr_t iram_addr, size_t size, int option) {
@@ -81,7 +82,7 @@ void atmosphereCheck(){
         } else {
             fclose(f);
 			consoleClear();
-            printf("Atmosphere Detected! PayloadNX does NOT Support Plain-Atmosphere \n Please use Hekate or other CFW.");
+            FuseeMagic();
         }
 	
 	
@@ -90,7 +91,7 @@ void atmosphereCheck(){
 
 void toggleAutoRCM(){
 	consoleClear();
-	
+	isMovable = 0;
 	FsStorage storage;
 
 	int returnable = 0;
@@ -121,11 +122,8 @@ void toggleAutoRCM(){
 	fsStorageWrite(&storage, 0, buf, size);
 	fsStorageClose(&storage);
 	free(buf);
-	printf("done! press home to exit");
-	return returnable;
-	printf("Operation: AutoRCM Toggle\n");
 	printf("\x1b[1;1H%s%s%s", CONSOLE_GREEN, "DONE!", CONSOLE_RESET);
-	printf("Press B to quit the application.\n");
+	printf("\x1b[3;1HPress B to quit the application.\n");
 	
 }
 
@@ -144,7 +142,7 @@ void reiCheck(){
         } else {
             fclose(f);
 			consoleClear();
-            printf("Atmosphere Detected! PayloadNX does NOT Support Plain-Atmosphere \n Please use Hekate or other CFW.");
+            ReiNXMagic();
         }
 	
 	
@@ -166,7 +164,7 @@ void sxCheck(){
         } else {
             fclose(f);
 			consoleClear();
-            printf("Atmosphere Detected! PayloadNX does NOT Support Plain-Atmosphere \n Please use Hekate or other CFW.");
+            sxosMagic();
         }
 	
 	
@@ -318,7 +316,7 @@ void ArgonCheck(){
         } else {
             fclose(f);
 			consoleClear();
-            printf("Atmosphere Detected! PayloadNX does NOT Support Plain-Atmosphere \n Please use Hekate or other CFW.");
+            ArgonNXMagic();
         }
 }
 }
@@ -337,7 +335,7 @@ void hekateCheck(){
         } else {
             fclose(f);
 			consoleClear();
-            printf("Atmosphere Detected! PayloadNX does NOT Support Plain-Atmosphere \n Please use Hekate or other CFW.");
+            hekateMagic();
         }
 }
 }
@@ -386,7 +384,7 @@ int main(int argc, char **argv)
 	int menu9 = 13;
 	int menu10 = 14;
 	int current = 6;
-	printf("\x1b[1;1H%s%s%s", CONSOLE_BLUE, "PayloadNX 3.0", CONSOLE_RESET);
+	printf("\x1b[1;1H%s%s%s", CONSOLE_BLUE, "PayloadNX 3.1", CONSOLE_RESET);
 	printf("\x1b[2;1H%s%s%s", CONSOLE_GREEN, "--Installed Custom Firmwares--", CONSOLE_RESET);
 	    Result rc1 = splInitialize();
     if (R_FAILED(rc1)) {
@@ -450,7 +448,7 @@ int main(int argc, char **argv)
     {
         hidScanInput();
         u64 kDown = hidKeysDown(CONTROLLER_P1_AUTO);
-		
+		if(isMovable == 1){
 		if (kDown & KEY_UP) 
 		{
 			printf("\x1b[%d;2H ", current);
@@ -515,6 +513,14 @@ int main(int argc, char **argv)
 				break;
 			}
 		}
+		}else{
+			//This is when a menu is toggled, such as toggling rcm to prevent menu mixing
+		}
+		//For a user to always be able to exit the application, we will place another KEY_B outside of the if statement.
+		if (kDown & KEY_B){
+			break;
+		}
+		
 		consoleUpdate(NULL);
 	
 	}
