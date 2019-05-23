@@ -3,6 +3,7 @@
 #include <switch.h>
 #include "recoverymode.h"
 #define IRAM_PAYLOAD_MAX_SIZE 0x2F000
+int urmumgay = 1;
 #define IRAM_PAYLOAD_BASE 0x40010000
 static alignas(0x1000) u8 g_reboot_payload[IRAM_PAYLOAD_MAX_SIZE];
 static alignas(0x1000) u8 g_ff_page[0x1000];
@@ -48,11 +49,7 @@ static void reboot_to_payload(void) {
 
 void sxosMagic(){
 	
-    Result rc = splInitialize();
-    if (R_FAILED(rc)) {
-        printf("SPL could not be initalized, Please message on our discord.\n");
-        
-    } else {
+
         FILE *f = fopen("sdmc:/PayloadNX/sx.bin", "rb");
         if (f == NULL) {
             ExceptionNotFound();
@@ -66,14 +63,11 @@ void sxosMagic(){
 	
 	
 }
-}
+
 
 void atmosphereCheck(){
 	bool isAtmosphere = 0;
-	Result rc = splInitialize();
-    if (R_FAILED(rc)) {
-		printf("SPL could not be initalized, Please message on our discord.\n");
-    } else {
+
 		//loader.ini = atmosphere only
         FILE *f = fopen("sdmc:/atmosphere/loader.ini", "rb");
         if (f == NULL) {
@@ -86,7 +80,7 @@ void atmosphereCheck(){
         }
 	
 	
-}
+
 }
 
 void toggleAutoRCM(){
@@ -352,8 +346,8 @@ int main(int argc, char **argv)
 	int current = 6;
 	printf("\x1b[1;1H%s%s%s", CONSOLE_BLUE, "PayloadNX 3.2", CONSOLE_RESET);
 	printf("\x1b[2;1H%s%s%s", CONSOLE_GREEN, "--Installed Custom Firmwares--", CONSOLE_RESET);
-	    Result rc1 = splInitialize();
-    if (R_FAILED(rc1)) {
+	   
+    if (urmumgay == 0) {
         printf("\n ERROR: Please restart PayloadNX!\n");
         
     } else {
@@ -368,9 +362,9 @@ int main(int argc, char **argv)
         }
 	}
     Result rc2 = splInitialize();
-    if (R_FAILED(rc2)) {
+    
+	if (urmumgay == 0) {
 		consoleClear();
-        printf("\n ERROR: Please restart PayloadNX!\n");
     } else {
         FILE *f = fopen("sdmc:/ReiNX/splash.bin", "rb");
         if (f == NULL) {
