@@ -37,7 +37,7 @@ DATA		:=	data
 INCLUDES	:=	include
 EXEFS_SRC	:=	exefs_src
 APP_AUTHOR	:=  SwitchFun
-APP_VERSION	:= 	3.0
+APP_VERSION	:= 	3.1
 #ROMFS	:=	romfs
 
 #---------------------------------------------------------------------------------
