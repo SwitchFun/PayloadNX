@@ -14,7 +14,7 @@ bool isMovable = 1;
 char *partitionNames[] = {"BOOT0", "BOOT1"};
 void do_iram_dram_copy(void *buf, uintptr_t iram_addr, size_t size, int option) {
     memcpy(g_work_page, buf, size);
-    SecmonArgs args = {0};
+     SecmonArgs args = {0};
     args.X[0] = 0xF0000201;
     args.X[1] = (uintptr_t)g_work_page;
     args.X[2] = iram_addr;
@@ -22,7 +22,7 @@ void do_iram_dram_copy(void *buf, uintptr_t iram_addr, size_t size, int option) 
     args.X[4] = option;
     svcCallSecureMonitor(&args);
     memcpy(buf, g_work_page, size);
-}
+}  
 void copy_to_iram(uintptr_t iram_addr, void *buf, size_t size) {
     do_iram_dram_copy(buf, iram_addr, size, 1);
 }
@@ -121,12 +121,18 @@ void toggleAutoRCM(){
 	
 }
 
-
+void panic(const char * message)
+{
+	consoleClear();
+	printf("PANIC: %s\n", message);
+	printf("\n\nPlease press B to exit PayloadNX.");
+	isMovable = 0;
+}
 void reiCheck(){
 	bool isAtmosphere = 0;
 	Result rc = splInitialize();
     if (R_FAILED(rc)) {
-		printf("SPL could not be initalized, Please message on our discord.\n");
+		panic("SPL FAILED TO INITIALIZE");
     } else {
 		//loader.ini = atmosphere only
         FILE *f = fopen("sdmc:/atmosphere/loader.ini", "rb");
@@ -238,7 +244,7 @@ void Slot1Magic(){
 		
     Result rc = splInitialize();
     if (R_FAILED(rc)) {
-        printf("SPL could not be initalized, Please message on our discord.\n");
+        panic("SPL FAILED TO INITIALIZE");
         
     } else {
         FILE *f = fopen("sdmc:/PayloadNX/slot1.bin", "rb");
@@ -403,7 +409,7 @@ int main(int argc, char **argv)
 
 	printf("\x1b[%d;2H>", current);
 	printf("\x1b[20;1HNOTE: AUTORCM IS DANGEROUS WE ARE NOT RESPONSIBLE FOR BRICKS OR ANYTHING!");
-	
+	panic("test panic!");
     while(appletMainLoop())
     {
         hidScanInput();
