@@ -12,5 +12,5 @@
 <br>
 /PayloadNX/fusee-primary.bin 
 </p>
-      <img src="https://modparadise.com/payloadnx.jpg" height="150">
+      <img src="https://modparadise.com/payloadnx.jpg" height="250">
 </center>
