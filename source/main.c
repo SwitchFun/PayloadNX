@@ -350,7 +350,7 @@ int main(int argc, char **argv)
 	int menu9 = 13;
 	int menu10 = 14;
 	int current = 6;
-	printf("\x1b[1;1H%s%s%s", CONSOLE_BLUE, "PayloadNX 3.2", CONSOLE_RESET);
+	printf("\x1b[1;1H%s%s%s", CONSOLE_BLUE, "PayloadNX 3.2.1", CONSOLE_RESET);
 	printf("\x1b[2;1H%s%s%s", CONSOLE_GREEN, "--Installed Custom Firmwares--", CONSOLE_RESET);
 	   
     if (urmumgay == 0) {
@@ -409,7 +409,6 @@ int main(int argc, char **argv)
 
 	printf("\x1b[%d;2H>", current);
 	printf("\x1b[20;1HNOTE: AUTORCM IS DANGEROUS WE ARE NOT RESPONSIBLE FOR BRICKS OR ANYTHING!");
-	panic("test panic!");
     while(appletMainLoop())
     {
         hidScanInput();
